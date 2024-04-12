@@ -4,6 +4,7 @@ import styled from "styled-components";
 const Test = () => {
   const [allDevices, setAllDevices] = useState(null);
   const [connectedDevice, setConnectedDevice] = useState(null);
+  const [heartRate, setHeartRate] = useState(null);
 
   //RN 으로부터 넘어오는 데이터 처리 로직
   useEffect(() => {
@@ -16,6 +17,10 @@ const Test = () => {
 
       if (data.type === "connectedDevice") {
         setConnectedDevice(data.data);
+      }
+
+      if (data.type === "heartRate") {
+        setHeartRate(data.data);
       }
     };
 
@@ -32,10 +37,17 @@ const Test = () => {
   }, []);
 
   // WebView -> RN 으로 데이터 전달(기기 연결, 해제 를 해달라는 type값과 기기 id 전달)
-  const hanldeClickWebToApp = (type, id) => {
-    window.ReactNativeWebView.postMessage(
-      JSON.stringify({ type: type, id: id })
-    );
+  const hanldeClickWebToApp = (type, data) => {
+    if (type === "connect") {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ type: type, data: data })
+      );
+    }
+    if (type === "disconnect") {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({ type: type, id: data })
+      );
+    }
   };
 
   return (
@@ -48,7 +60,7 @@ const Test = () => {
               <div>{el.id}</div>
               <div>{el.name}</div>
             </ColummBox>
-            <button onClick={() => hanldeClickWebToApp("connect", el.id)}>
+            <button onClick={() => hanldeClickWebToApp("connect", el)}>
               연결
             </button>
           </FlexBox>
@@ -57,21 +69,21 @@ const Test = () => {
       <DivLine />
 
       <Title>연결된 장치</Title>
-      {connectedDevice && (
-        <FlexBox>
-          <ColummBox>
-            <div>{connectedDevice.id}</div>
-            <div>{connectedDevice.name}</div>
-          </ColummBox>
-          <button
-            onClick={() =>
-              hanldeClickWebToApp("disconnect", connectedDevice.id)
-            }
-          >
-            해제
-          </button>
-        </FlexBox>
-      )}
+      {connectedDevice &&
+        connectedDevice.map((el, i) => (
+          <>
+            <FlexBox key={i}>
+              <ColummBox>
+                <div>{el.id}</div>
+                <div>{el.name}</div>
+              </ColummBox>
+              <button onClick={() => hanldeClickWebToApp("disconnect", el.id)}>
+                해제
+              </button>
+            </FlexBox>
+            {heartRate && <h3>심박수 : {heartRate}</h3>}
+          </>
+        ))}
     </Wrapper>
   );
 };
