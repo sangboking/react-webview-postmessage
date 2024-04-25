@@ -4,7 +4,7 @@ import styled from "styled-components";
 const Test = () => {
   const [allDevices, setAllDevices] = useState(null);
   const [connectedDevice, setConnectedDevice] = useState(null);
-  const [heartRate, setHeartRate] = useState(null);
+  const [bleData, setBleData] = useState(null);
 
   //RN 으로부터 넘어오는 데이터 처리 로직
   useEffect(() => {
@@ -19,8 +19,8 @@ const Test = () => {
         setConnectedDevice(data.data);
       }
 
-      if (data.type === "heartRate") {
-        setHeartRate(data.data);
+      if (data.type === "bleData") {
+        setBleData(data.data);
       }
     };
 
@@ -81,7 +81,10 @@ const Test = () => {
                 해제
               </button>
             </FlexBox>
-            {heartRate && <h3>심박수 : {heartRate}</h3>}
+            {bleData.speedCadence && (
+              <h3>speedCadence : {bleData.speedCadence}</h3>
+            )}
+            {bleData.power && <h3>power : {bleData.power}</h3>}
           </>
         ))}
     </Wrapper>
