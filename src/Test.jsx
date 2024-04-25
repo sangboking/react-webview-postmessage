@@ -81,12 +81,11 @@ const Test = () => {
                 해제
               </button>
             </FlexBox>
-            {bleData.speedCadence && (
-              <h3>speedCadence : {bleData.speedCadence}</h3>
-            )}
-            {bleData.power && <h3>power : {bleData.power}</h3>}
           </>
         ))}
+
+      {bleData && <h3>speedCadence : {bleData.speedCadence}</h3>}
+      {bleData && <h3>power : {bleData.power}</h3>}
     </Wrapper>
   );
 };
